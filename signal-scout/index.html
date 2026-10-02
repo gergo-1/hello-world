@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#08111f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Signal Scout</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">LIVE COVERAGE ESTIMATOR</div>
+      <h1>Signal Scout</h1>
+    </div>
+    <div id="gpsPill" class="pill"><span class="dot"></span><span id="gpsText">GPS idle</span></div>
+  </header>
+
+  <main>
+    <section class="hero-card">
+      <div class="hero-copy">
+        <div class="hero-kicker">Projected signal loss</div>
+        <div class="hero-value" id="etaBig">—</div>
+        <div class="hero-sub" id="predictionText">Start tracking to estimate where signal may drop.</div>
+      </div>
+      <button id="startBtn" class="primary">Start tracking</button>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat"><span>Speed</span><strong id="speedVal">—</strong><small>km/h</small></article>
+      <article class="stat"><span>Heading</span><strong id="headingVal">—</strong><small id="headingText">direction</small></article>
+      <article class="stat"><span>Nearest mast</span><strong id="nearestVal">—</strong><small>km</small></article>
+      <article class="stat"><span>Edge ahead</span><strong id="edgeVal">—</strong><small>km</small></article>
+    </section>
+
+    <section class="map-card">
+      <div id="map"></div>
+      <div class="map-legend">
+        <span><i class="legend-dot tower"></i> mapped mobile mast</span>
+        <span><i class="legend-dot you"></i> you</span>
+        <span><i class="legend-line"></i> projected path</span>
+      </div>
+    </section>
+
+    <section class="controls-card">
+      <div class="section-title"><div><h2>Alert settings</h2><p>Signal loss is estimated from mapped masts, not guaranteed carrier coverage.</p></div></div>
+
+      <label class="control-row">
+        <div><strong>Warn me before cutoff</strong><span>Notification fires while tracking is active.</span></div>
+        <select id="leadSelect">
+          <option value="1">1 min</option>
+          <option value="2">2 min</option>
+          <option value="3" selected>3 min</option>
+          <option value="5">5 min</option>
+          <option value="10">10 min</option>
+        </select>
+      </label>
+
+      <label class="control-row slider-row">
+        <div><strong>Estimated mast radius</strong><span>Adjust for terrain, band and rural/urban conditions.</span></div>
+        <div class="slider-wrap"><input id="radiusSlider" type="range" min="1" max="15" step="0.5" value="5" /><output id="radiusOut">5 km</output></div>
+      </label>
+
+      <label class="control-row">
+        <div><strong>Operator filter</strong><span>Uses carrier tags when the mapped mast has them.</span></div>
+        <select id="operatorSelect"><option value="all">All mapped masts</option></select>
+      </label>
+
+      <label class="control-row">
+        <div><strong>Notifications</strong><span id="notifyHint">Allow alerts so Signal Scout can warn you.</span></div>
+        <button id="notifyBtn" class="secondary">Enable</button>
+      </label>
+
+      <label class="control-row">
+        <div><strong>Keep screen awake</strong><span>Improves tracking reliability on long drives when supported.</span></div>
+        <input id="wakeToggle" class="toggle" type="checkbox" checked />
+      </label>
+    </section>
+
+    <section class="notice-card">
+      <strong>How the prediction works</strong>
+      <p>Signal Scout looks for OpenStreetMap features tagged as mobile-phone masts/antennas, then projects a straight line from your current heading and speed. The first projected point outside all estimated mast-radius circles becomes the “edge ahead.” Real service can cut out earlier or later because of terrain, buildings, carrier bands, hand-offs and incomplete tower mapping.</p>
+      <p class="tiny">Do not interact with this screen while driving. Set it before moving and rely on audio/notification alerts.</p>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>
